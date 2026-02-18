@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>YAKUZA MUNIÇÃO</title>
+
+<!-- Fonte estilo japonesa -->
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+    font-family:'Cinzel',serif;
+    background:radial-gradient(circle at center,#0a0a0a,#000);
+    color:#d4af37;
+    overflow-x:hidden;
+}
+
+/* Moldura dourada */
+.container{
+    max-width:1000px;
+    margin:40px auto;
+    padding:40px;
+    background:linear-gradient(145deg,#0b0b0b,#141414);
+    border:3px solid #d4af37;
+    border-radius:25px;
+    box-shadow:
+        0 0 30px rgba(212,175,55,0.6),
+        inset 0 0 40px rgba(212,175,55,0.2);
+    position:relative;
+}
+
+/* Efeito decorativo canto */
+.container::before,
+.container::after{
+    content:"";
+    position:absolute;
+    width:120px;
+    height:120px;
+    border:3px solid #d4af37;
+}
+
+.container::before{
+    top:-15px;
+    left:-15px;
+    border-right:none;
+    border-bottom:none;
+}
+
+.container::after{
+    bottom:-15px;
+    right:-15px;
+    border-left:none;
+    border-top:none;
+}
+
+/* Título */
+h1{
+    text-align:center;
+    font-size:38px;
+    letter-spacing:5px;
+    margin-bottom:30px;
+    color:#f5d27a;
+    text-shadow:
+        0 0 10px #d4af37,
+        0 0 25px rgba(212,175,55,0.8);
+    animation:glow 2s infinite alternate;
+}
+
+@keyframes glow{
+    from{ text-shadow:0 0 10px #d4af37;}
+    to{ text-shadow:0 0 25px #d4af37,0 0 45px #b8860b;}
+}
+
+/* Status */
+.status-modo{
+    text-align:center;
+    padding:14px;
+    border-radius:12px;
+    font-weight:bold;
+    margin-bottom:25px;
+    transition:0.3s;
+}
+
+.parceria{
+    background:#111;
+    border:1px solid #d4af37;
+    box-shadow:0 0 15px #d4af37;
+}
+
+.normal{
+    background:#1a0000;
+    border:1px solid #aa0000;
+    color:#ff4d4d;
+    box-shadow:0 0 15px #aa0000;
+}
+
+/* Botões */
+.toggle{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+button{
+    padding:12px 28px;
+    margin:5px;
+    border:none;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+    font-family:'Cinzel',serif;
+    transition:0.3s;
+}
+
+.gold{
+    background:linear-gradient(45deg,#d4af37,#b8860b);
+    color:black;
+}
+
+.red{
+    background:linear-gradient(45deg,#8b0000,#aa0000);
+    color:white;
+}
+
+button:hover{
+    transform:scale(1.1);
+    box-shadow:0 0 20px #d4af37;
+}
+
+/* Produtos */
+.produto{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px;
+    border-bottom:1px solid rgba(212,175,55,0.2);
+    transition:0.3s;
+}
+
+.produto:hover{
+    background:rgba(212,175,55,0.08);
+    transform:scale(1.02);
+}
+
+.produto span{
+    font-size:14px;
+    color:#aaa;
+}
+
+input{
+    width:80px;
+    padding:6px;
+    background:#000;
+    border:1px solid #d4af37;
+    color:#d4af37;
+    text-align:center;
+    border-radius:6px;
+}
+
+/* Resumo */
+.resumo{
+    display:flex;
+    gap:20px;
+    margin-top:35px;
+}
+
+.card{
+    flex:1;
+    background:#0a0a0a;
+    padding:25px;
+    border-radius:15px;
+    text-align:center;
+    border:1px solid #d4af37;
+    box-shadow:0 0 20px rgba(212,175,55,0.4);
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 0 35px #d4af37;
+}
+
+.valor{
+    font-size:24px;
+    margin-top:10px;
+    color:#f5d27a;
+}
+
+footer{
+    text-align:center;
+    margin-top:30px;
+    font-size:12px;
+    color:#666;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>YAKUZA MUNIÇÃO</h1>
+
+<div id="statusModo" class="status-modo parceria">
+🟢 MODO PARCERIA ATIVO
+</div>
+
+<div class="toggle">
+    <button class="gold" onclick="setModo('parceria')">Com Parceria</button>
+    <button class="red" onclick="setModo('normal')">Sem Parceria</button>
+</div>
+
+<div id="produtos"></div>
+
+<div class="resumo">
+    <div class="card">
+        <div>Total Bruto</div>
+        <div class="valor" id="total">R$ 0,00</div>
+    </div>
+    <div class="card">
+        <div>Vendedor (30%)</div>
+        <div class="valor" id="vendedorValor">R$ 0,00</div>
+    </div>
+    <div class="card">
+        <div>Empresa (70%)</div>
+        <div class="valor" id="empresaValor">R$ 0,00</div>
+    </div>
+</div>
+
+<footer>Império Yakuza ©</footer>
+
+</div>
+
+<script>
+let modo="parceria";
+
+const produtos=[
+{nome:"Five",parceria:278.35,normal:303.08},
+{nome:"AKS",parceria:307.10,normal:341.25},
+{nome:"M4A1",parceria:307.10,normal:341.25},
+{nome:"Remington",parceria:327.35,normal:363.75},
+{nome:"Glock",parceria:226.10,normal:251.25},
+{nome:"Sniper",parceria:10776.00,normal:11962.00},
+{nome:"Maconha",parceria:320.00,normal:350.00}
+];
+
+function setModo(n){
+modo=n;
+const s=document.getElementById("statusModo");
+if(modo==="parceria"){
+s.className="status-modo parceria";
+s.innerText="🟢 MODO PARCERIA ATIVO";
+}else{
+s.className="status-modo normal";
+s.innerText="🔴 MODO SEM PARCERIA";
+}
+render();
+}
+
+function render(){
+const c=document.getElementById("produtos");
+c.innerHTML="";
+produtos.forEach((p,i)=>{
+c.innerHTML+=`
+<div class="produto">
+<div>${p.nome}<br><span>${formatar(p[modo])} unitário</span></div>
+<input type="number" min="0" value="0" oninput="calcular()" id="q${i}">
+</div>`;
+});
+calcular();
+}
+
+function calcular(){
+let total=0;
+produtos.forEach((p,i)=>{
+const q=parseInt(document.getElementById("q"+i)?.value)||0;
+total+=q*p[modo];
+});
+document.getElementById("total").innerText=formatar(total);
+document.getElementById("vendedorValor").innerText=formatar(total*0.30);
+document.getElementById("empresaValor").innerText=formatar(total*0.70);
+}
+
+function formatar(v){
+return v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+}
+
+render();
+</script>
+
+</body>
+</html>
