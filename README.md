@@ -1,1 +1,1 @@
-# yakusa
+# yakuza
